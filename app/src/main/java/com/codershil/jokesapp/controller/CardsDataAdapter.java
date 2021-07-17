@@ -2,6 +2,8 @@ package com.codershil.jokesapp.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.codershil.jokesapp.R;
 import com.codershil.jokesapp.model.Joke;
 import com.codershil.jokesapp.view.JokeViewHolder;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 
 import java.util.List;
 
@@ -22,12 +26,14 @@ public class CardsDataAdapter extends RecyclerView.Adapter<JokeViewHolder> {
     private LayoutInflater layoutInflater;
     private boolean isLiked = true;
     private JokeLikeListener jokeLikeListener;
+    private SharedPreferences sharedPreferences;
 
-    public CardsDataAdapter(Context context, List<Joke> jokeList,JokeLikeListener jokeLikeListener) {
+    public CardsDataAdapter(Context context, List<Joke> jokeList, JokeLikeListener jokeLikeListener) {
         this.context = context;
         this.jokeList = jokeList;
         layoutInflater = LayoutInflater.from(context);
         this.jokeLikeListener = jokeLikeListener;
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
 
@@ -40,6 +46,14 @@ public class CardsDataAdapter extends RecyclerView.Adapter<JokeViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull JokeViewHolder holder, int position) {
+        if (sharedPreferences.contains(jokeList.get(position).getJokeText())) {
+            holder.getLikeButton().setImageResource(R.drawable.like_filled);
+            isLiked = false;
+        } else {
+            isLiked = true;
+        }
+
+
         holder.getJokeText().setText(jokeList.get(position).getJokeText());
         holder.getLikeButton().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +63,9 @@ public class CardsDataAdapter extends RecyclerView.Adapter<JokeViewHolder> {
                     holder.getLikeButton().setImageResource(R.drawable.like_filled);
                     joke.setJokeLiked(true);
                     isLiked = false;
+                    YoYo.with(Techniques.Tada)
+                            .duration(700)
+                            .playOn(holder.getLikeButton());
 
                 } else {
                     holder.getLikeButton().setImageResource(R.drawable.like_empty);
@@ -65,9 +82,9 @@ public class CardsDataAdapter extends RecyclerView.Adapter<JokeViewHolder> {
                 String jokeText = jokeList.get(position).getJokeText();
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_SUBJECT,"JOKE");
-                intent.putExtra(Intent.EXTRA_TEXT,jokeText);
-                context.startActivity(Intent.createChooser(intent,"Share Joke Using..."));
+                intent.putExtra(Intent.EXTRA_SUBJECT, "JOKE");
+                intent.putExtra(Intent.EXTRA_TEXT, jokeText);
+                context.startActivity(Intent.createChooser(intent, "Share Joke Using..."));
             }
         });
     }
