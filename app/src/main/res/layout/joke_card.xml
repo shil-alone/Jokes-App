@@ -43,14 +43,14 @@
                     android:id="@+id/likeButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/greyish"
                     android:src="@drawable/like_empty" />
 
                 <ImageButton
                     android:id="@+id/shareButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
+                    android:backgroundTint="@color/greyish"
                     android:src="@drawable/share" />
 
             </LinearLayout>
